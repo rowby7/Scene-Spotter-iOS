@@ -11,7 +11,7 @@ import SwiftUI
 struct SceneSpotterApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginView()
         }
     }
 }
