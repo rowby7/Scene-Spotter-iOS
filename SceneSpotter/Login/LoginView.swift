@@ -25,10 +25,8 @@ struct LoginView: View {
                     .textFieldStyle(.roundedBorder)
                 
                 HStack (spacing: 20){
-                    Button("Login" ){
-                        
-                    }
-                    .buttonStyle(.bordered)
+                    NavigationLink("Login", destination: MapView())
+                        .buttonStyle(.bordered)
                     
                     NavigationLink("Sign Up", destination: SignUpView())
                         .buttonStyle(.bordered)
