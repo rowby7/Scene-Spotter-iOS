@@ -32,11 +32,19 @@ struct MapView: View {
                         .frame(width: 40, height: 40)
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                        
+                    
                 }
-                .padding() // spacing from top/right edges
+                .padding()
+                
             }
-
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing){
+                    NavigationLink(destination: UploadView()) {
+                        Image(systemName: "plus.circle.fill")
+                            .imageScale(.large)
+                    }
+                }
+            }
         }
     }
 }
