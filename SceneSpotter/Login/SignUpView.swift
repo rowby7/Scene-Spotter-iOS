@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct SignUpView: View {
+    @Environment(AuthManager.self) var authManager
     
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var confirmPassword:String = ""
     @State private var email: String = ""
+    @State private var signUpError: String?
     
     var body: some View {
         VStack{
@@ -37,13 +39,12 @@ struct SignUpView: View {
                 .textFieldStyle(
                     .roundedBorder)
             
-            Button("Sign Up"){
+            Button("Sign Up") {
+                
+                authManager.signUp(email: email, password: password)
                 
             }
-            .buttonStyle(.bordered)
-               
         }
-        .padding(.horizontal, 20)
     }
 }
 

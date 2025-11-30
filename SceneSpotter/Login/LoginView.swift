@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct LoginView: View {
+    
+    @Environment(AuthManager.self) var authManager
+    
     @State private var username: String = ""
     @State private var password: String = ""
     var body: some View {
@@ -21,12 +24,14 @@ struct LoginView: View {
                 TextField("username", text: $username)
                     .textFieldStyle(.roundedBorder)
                 
-                TextField("password", text: $password)
+                SecureField("password", text: $password)
                     .textFieldStyle(.roundedBorder)
                 
                 HStack (spacing: 20){
-                    NavigationLink("Login", destination: MapView())
-                        .buttonStyle(.bordered)
+                    Button("Login"){
+                        authManager.signIn(email: username, password: password)
+                    }
+                    .buttonStyle(.bordered)
                     
                     NavigationLink("Sign Up", destination: SignUpView())
                         .buttonStyle(.bordered)
