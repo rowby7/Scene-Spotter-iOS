@@ -7,16 +7,20 @@
 
 import SwiftUI
 import PhotosUI
+import CoreLocation
+import MapKit
 
 struct UploadView: View {
     @State private var selectedImage: Image? = Image(systemName: "photo.artframe")
     @State private var selectedUIImage: UIImage?
     @State private var isPresentingImagePicker: Bool = false
     @State private var selectedPhoto: PhotosPickerItem?
-
+    
     @State private var showName: String = ""
     @State private var showDescription: String = ""
     @State private var location: String = ""
+    @State private var coordinates: CLLocationCoordinate2D?
+    @State private var coordinateInText: String = ""
     
     @State private var isUploading: Bool = false
     @State private var showAlert: Bool = false
@@ -63,6 +67,14 @@ struct UploadView: View {
                             Text("Location address")
                             TextField("Location Address", text: $location)
                                 .textFieldStyle(.roundedBorder)
+                            Button(action:{
+                                Task{
+                                    await geoAddress(location)
+                                }}, label: {
+                                Text("Find on map")
+                            })
+                            
+                            TextField ("Coordinates", text: $coordinates)
                         }
                     }
                 }
@@ -82,10 +94,27 @@ struct UploadView: View {
                 .cornerRadius(12)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 10)
-                .disabled(isUploading || !isFormValid())
-                   
+                
             }
             .padding(.horizontal, 20)
+            .onChange(of: selectedPhoto) { _, newItem in
+                guard let newItem else { return }
+                Task {
+                    do {
+                        if let data = try await newItem.loadTransferable(type: Data.self),
+                           let uiImage = UIImage(data: data) {
+                            // Update your state
+                            selectedUIImage = uiImage
+                            selectedImage = Image(uiImage: uiImage)
+                        }
+                    } catch {
+                        // Optionally present your alert
+                        print("Failed to load UIImage: \(error)")
+                        alertMessage = "Couldn't load the selected photo."
+                        showAlert = true
+                    }
+                }
+            }
             .navigationTitle("Upload Scene")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -104,63 +133,59 @@ struct UploadView: View {
                     }
                 }
             }
-            .onChange(of: selectedPhoto) { oldValue, newValue in
-                guard oldValue != newValue else { return }
-                Task {
-                    if let data = try? await newValue?.loadTransferable(type: Data.self),
-                       let uiImage = UIImage(data: data) {
-                        selectedUIImage = uiImage
-                        selectedImage = Image(uiImage: uiImage)
-                    }
-                }
-            }
-            .alert("Upload Status", isPresented: $showAlert) {
-                Button("OK") {
-                    if !alertMessage.contains("Error") {
-                        clearForm()
-                    }
-                }
-            } message: {
-                Text(alertMessage)
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Notice"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
         }
     }
     
-    func isFormValid() -> Bool {
-        !showName.isEmpty && !location.isEmpty && selectedUIImage != nil
-    }
     
+    func geoAddress(_ address: String) async -> CLLocationCoordinate2D? {
+        
+        guard let request = MKGeocodingRequest(addressString : address) else {
+            return nil
+        }
+        
+        do {
+            let items = try await request.mapItems
+            return items.first?.location.coordinate
+        } catch {
+            print("Geocoding error: \(error)")
+            return nil
+        }
+    }
     func uploadScene() {
-        guard let image = selectedUIImage else { return }
-        
+        guard let item = selectedPhoto else {
+            alertMessage = "Please select a photo first."
+            showAlert = true
+            return
+        }
         isUploading = true
-        
-        FirebaseManager.shared.uploadSceneWithImage(
-            image: image,
-            showName: showName,
-            sceneDescription: showDescription,
-            locationAddress: location
-        ) { result in
-            isUploading = false
-            
-            switch result {
-            case .success:
-                alertMessage = "Scene uploaded successfully!"
-                showAlert = true
-            case .failure(let error):
-                alertMessage = "Error uploading scene: \(error.localizedDescription)"
-                showAlert = true
+        Task {
+            do {
+                guard let data = try await item.loadTransferable(type: Data.self) else {
+                    await MainActor.run {
+                        isUploading = false
+                        alertMessage = "Couldn't load the selected photo."
+                        showAlert = true
+                    }
+                    return
+                }
+                _ = try await StorageManager.shared.saveImage(data: data)
+                await MainActor.run {
+                    isUploading = false
+                    alertMessage = "Upload complete!"
+                    showAlert = true
+                }
+            } catch {
+                await MainActor.run {
+                    isUploading = false
+                    alertMessage = "Upload failed: \(error.localizedDescription)"
+                    print("Upload failed: \(error.localizedDescription)")
+                    showAlert = true
+                }
             }
         }
-    }
-    
-    func clearForm() {
-        showName = ""
-        showDescription = ""
-        location = ""
-        selectedImage = Image(systemName: "photo.artframe")
-        selectedUIImage = nil
-        selectedPhoto = nil
     }
 }
 #Preview {
