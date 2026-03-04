@@ -13,10 +13,13 @@ import FirebaseFirestore
 
 class SceneViewModel: ObservableObject {
     
-    @Published var scene: KScene = KScene(showName: <#T##String#>, sceneDescription: <#T##String#>, locationAddress: <#T##String#>, imageURL: <#T##String#>, uploadedBy: <#T##String#>, uploadDate: <#T##Date#>)
+    @Published var scene: KScene = KScene(showName: "", sceneDescription: "", locationAddress: "", imageURL: "", uploadedBy: "")
     
    private var db = Firestore.firestore()
 
+    
+    //create upload image function
+    
     func addScene(scene: KScene) {
         do {
             let _ = try db.collection("scenes").addDocument(from: scene)
@@ -26,6 +29,10 @@ class SceneViewModel: ObservableObject {
         }
     }
     
+    //call the upload image function here
+    //then connect the url recieved into the kscene
+    //by doing let scene Kscene then fill that out
+    //after connecting the url to KScene call the addscene function
     func save() {
         addScene(scene: scene)
     }

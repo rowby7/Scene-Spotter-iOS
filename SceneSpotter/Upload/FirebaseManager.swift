@@ -80,7 +80,8 @@ class FirebaseManager {
                     sceneDescription: sceneDescription,
                     locationAddress: locationAddress,
                     imageURL: imageURL,
-                    uploadedBy: userId
+                    uploadedBy: userId,
+                    uploadDate: Date()
                 )
                 
                 self?.uploadScene(scene) { result in

@@ -9,6 +9,7 @@ import SwiftUI
 import PhotosUI
 import CoreLocation
 import MapKit
+import FirebaseStorage
 
 struct UploadView: View {
     @StateObject var viewModel: SceneViewModel
