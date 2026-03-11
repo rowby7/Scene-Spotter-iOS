@@ -130,8 +130,32 @@ struct UploadView: View {
     
     
     func handleUploadTapped() {
-        
+        guard let uiImage = selectedUIImage else {
+            alertMessage = "Please select an image first"
+            showAlert = true
+            return
         }
+        
+        // Validate that we have required data
+        guard !viewModel.scene.showName.isEmpty else {
+            alertMessage = "Please enter the show name"
+            showAlert = true
+            return
+        }
+        
+        guard !viewModel.scene.locationAddress.isEmpty else {
+            alertMessage = "Please enter the location address"
+            showAlert = true
+            return
+        }
+        
+        // Start uploading
+        isUploading = true
+        
+        //TODO: write the function to call the Firebase Manager to upload the info and image info
+        }
+    
+    
     
 }
 #Preview {

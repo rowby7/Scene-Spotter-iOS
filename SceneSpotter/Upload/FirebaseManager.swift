@@ -11,86 +11,36 @@ import FirebaseStorage
 import FirebaseFirestore
 import FirebaseAuth
 import UIKit
+import Combine
 
 class FirebaseManager {
+    private var progress: Double?
     static let shared = FirebaseManager()
     
     private let storage = Storage.storage()
     private let db = Firestore.firestore()
     
-    private init() {}
     
-    // Upload image to Firebase Storage
-    func uploadImage(_ image: UIImage, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let imageData = image.jpegData(compressionQuality: 0.7) else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not convert image to data"])))
-            return
-        }
+    func storeSceneImage(_ image: UIImage) async throws -> URL{
         
-        let imageName = UUID().uuidString
-        let storageRef = storage.reference().child("scene-images/\(imageName).jpg")
+        let imageID = UUID().uuidString
+        let imageReference = Storage.storage().reference().child("SceneImage/\(imageID).jpg")
         
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
         
-        storageRef.putData(imageData, metadata: metadata) { metadata, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            storageRef.downloadURL { url, error in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-                
-                if let downloadURL = url?.absoluteString {
-                    completion(.success(downloadURL))
-                }
-            }
-        }
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            throw NSError(domain: "FirebaseManager", code: 100, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to Jpeg data"]
+        )}
+        let _ = try await imageReference.putDataAsync(imageData, metadata: metadata)
+
+        let imageUrl = try await imageReference.downloadURL()
+        
+        return imageUrl
     }
     
-    // Upload scene data to Firestore
-    func uploadScene(_ scene: KScene, completion: @escaping (Result<String, Error>) -> Void) {
-        do {
-            let docRef = try db.collection("scenes").addDocument(from: scene)
-            completion(.success(docRef.documentID))
-        } catch {
-            completion(.failure(error))
-        }
-    }
-    
-    // Complete upload process: image + data
-    func uploadSceneWithImage(image: UIImage, showName: String, sceneDescription: String, locationAddress: String, completion: @escaping (Result<String, Error>) -> Void) {
+    func storeScene(_ scene: KScene, image: UIImage) async throws {
         
-        guard let userId = Auth.auth().currentUser?.uid else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user logged in"])))
-            return
-        }
-        
-        // First upload the image
-        uploadImage(image) { [weak self] result in
-            switch result {
-            case .success(let imageURL):
-                // Then create and upload the scene data
-                let scene = KScene(
-                    showName: showName,
-                    sceneDescription: sceneDescription,
-                    locationAddress: locationAddress,
-                    imageURL: imageURL,
-                    uploadedBy: userId,
-                    uploadDate: Date()
-                )
-                
-                self?.uploadScene(scene) { result in
-                    completion(result)
-                }
-                
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        let imageURL = try await storeSceneImage(image)
     }
 }

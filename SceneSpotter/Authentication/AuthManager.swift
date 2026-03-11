@@ -24,7 +24,13 @@ class AuthManager {
         // Listen for auth state changes
         handle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
             self?.user = user
-            self?.isSignedIn = user != nil
+            self?.isSignedIn = user != nil //shorthand way of the if/else
+            
+//            if user != nil {
+//                isSignedIn = true
+//            } else {
+//                isSignedIn = false
+//            }
         }
     }
     
