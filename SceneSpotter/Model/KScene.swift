@@ -5,13 +5,13 @@ import Firebase
 struct KScene: Identifiable, Codable {
     
     
-    @DocumentID var id:     String?
-    var showName:           String
-    var sceneDescription:   String
-    var locationAddress:    String
-    var imageURL:           String
-    var uploadedBy:         String
-    var uploadDate:         Date
+    @DocumentID var id:     String? = ""
+    var showName:           String  = ""
+    var sceneDescription:   String  = ""
+    var locationAddress:    String  = ""
+    var imageURL:           String  = ""
+    var uploadedBy:         String  = ""
+    var uploadDate:         Date    = Date()
     
     
     enum CodingKeys: String, CodingKey {
@@ -23,13 +23,11 @@ struct KScene: Identifiable, Codable {
         case uploadedBy
         case uploadDate
     }
-    init(showName: String, sceneDescription: String, locationAddress: String, imageURL: String, uploadedBy: String) {
-        self.showName = showName
-        self.sceneDescription = sceneDescription
-        self.locationAddress = locationAddress
-        self.imageURL = imageURL
-        self.uploadedBy = uploadedBy
-        self.uploadDate = Date()
+    
+    func withImage(_ url: String) -> KScene {
+        var copy = self
+        copy.imageURL = url
+        return copy
     }
     
 }

@@ -18,7 +18,7 @@ class FirebaseManager {
     static let shared = FirebaseManager()
     
     private let storage = Storage.storage()
-    private let db = Firestore.firestore()
+    private let dataBase = Firestore.firestore()
     
     
     func storeSceneImage(_ image: UIImage) async throws -> URL{
@@ -41,6 +41,16 @@ class FirebaseManager {
     
     func storeScene(_ scene: KScene, image: UIImage) async throws {
         
-        let imageURL = try await storeSceneImage(image)
+        let imageUrl = try await storeSceneImage(image)
+        
+        var updatedScene = scene.withImage(imageUrl.absoluteString)
+        
+        do{
+            try dataBase.collection("Scenes").document().setData(from: updatedScene)
+        } catch {
+            print("Failed to store scene to Firestore: \(error.localizedDescription)")
+            throw error
+        }
+        
     }
 }

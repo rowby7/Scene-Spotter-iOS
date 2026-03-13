@@ -12,7 +12,7 @@ import MapKit
 import FirebaseStorage
 
 struct UploadView: View {
-    @StateObject var viewModel: SceneViewModel
+    @StateObject var sceneViewModel: SceneViewModel
     @State private var selectedImage: Image? = Image(systemName: "photo.artframe")
     @State private var selectedUIImage: UIImage?
     @State private var isPresentingImagePicker: Bool = false
@@ -137,13 +137,13 @@ struct UploadView: View {
         }
         
         // Validate that we have required data
-        guard !viewModel.scene.showName.isEmpty else {
+        guard !sceneViewModel.scene.showName.isEmpty else {
             alertMessage = "Please enter the show name"
             showAlert = true
             return
         }
         
-        guard !viewModel.scene.locationAddress.isEmpty else {
+        guard !sceneViewModel.scene.locationAddress.isEmpty else {
             alertMessage = "Please enter the location address"
             showAlert = true
             return
@@ -153,6 +153,11 @@ struct UploadView: View {
         isUploading = true
         
         //TODO: write the function to call the Firebase Manager to upload the info and image info
+        Task {
+            sceneViewModel.saveScene(with: uiImage) { result in
+                
+            }
+        }
         }
     
     
