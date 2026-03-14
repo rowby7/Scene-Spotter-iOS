@@ -21,7 +21,7 @@ class SceneViewModel: ObservableObject {
     
         
     
-    func saveScene( with image: UIImage) async throws {
+    func saveScene(with image: UIImage) async {
         isUploading = true
         uploadError = nil
         
@@ -29,15 +29,9 @@ class SceneViewModel: ObservableObject {
             try await firebaseManager.storeScene(scene, image: image)
             isUploading = false
         } catch {
-            
             isUploading = false
             uploadError = error
-            
         }
-        
-        
     }
-    
-    //TODO: Add fetch scenes
  
 }

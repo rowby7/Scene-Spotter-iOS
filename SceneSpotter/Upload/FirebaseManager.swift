@@ -23,6 +23,7 @@ class FirebaseManager {
     
     func storeSceneImage(_ image: UIImage) async throws -> URL{
         
+        
         let imageID = UUID().uuidString
         let imageReference = Storage.storage().reference().child("SceneImage/\(imageID).jpg")
         
@@ -41,10 +42,16 @@ class FirebaseManager {
     
     func storeScene(_ scene: KScene, image: UIImage) async throws {
         
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            throw NSError(domain: "FirebaseManager", code: 101, userInfo: [NSLocalizedDescriptionKey: "No authenticated user found"])
+        }
+        
+        
         let imageUrl = try await storeSceneImage(image)
         
         var updatedScene = scene.withImage(imageUrl.absoluteString)
-        
+        updatedScene.uploadedBy = currentUserID
+        updatedScene.uploadDate = Date()
         do{
             try dataBase.collection("Scenes").document().setData(from: updatedScene)
         } catch {

@@ -18,7 +18,6 @@ struct UploadView: View {
     @State private var isPresentingImagePicker: Bool = false
     @State private var selectedPhoto: PhotosPickerItem?
 
-    @State private var isUploading: Bool = false
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     
@@ -39,7 +38,7 @@ struct UploadView: View {
                         VStack(alignment: .leading){
                             Text("Name of show")
                             
-                            TextField("Name of Show", text: $viewModel.scene.showName)
+                            TextField("Name of Show", text: $sceneViewModel.scene.showName)
                                 .textFieldStyle(.roundedBorder)
                         }
                         .padding(.bottom, 16)
@@ -47,7 +46,7 @@ struct UploadView: View {
                         
                         VStack(alignment: .leading){
                             Text("Scene Description")
-                            TextEditor(text: $viewModel.scene.sceneDescription)
+                            TextEditor(text: $sceneViewModel.scene.sceneDescription)
                                 .frame(height: 100)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
@@ -61,7 +60,7 @@ struct UploadView: View {
                         VStack(alignment: .leading){
                             
                             Text("Location address")
-                            TextField("Location Address", text: $viewModel.scene.locationAddress)
+                            TextField("Location Address", text: $sceneViewModel.scene.locationAddress)
                                 .textFieldStyle(.roundedBorder)
                            
                         }
@@ -69,7 +68,7 @@ struct UploadView: View {
                 }
                 
                 Button(action: handleUploadTapped) {
-                    if isUploading {
+                    if sceneViewModel.isUploading {
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     } else {
@@ -78,7 +77,7 @@ struct UploadView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(isUploading ? Color.gray : Color.blue)
+                .background(sceneViewModel.isUploading ? Color.gray : Color.blue)
                 .foregroundColor(.white)
                 .cornerRadius(12)
                 .padding(.horizontal, 20)
@@ -149,21 +148,33 @@ struct UploadView: View {
             return
         }
         
-        // Start uploading
-        isUploading = true
+       
         
-        //TODO: write the function to call the Firebase Manager to upload the info and image info
         Task {
-            sceneViewModel.saveScene(with: uiImage) { result in
-                
+            await sceneViewModel.saveScene(with: uiImage)
+            
+            
+            if sceneViewModel.uploadError == nil {
+                resetForm()
+            } else {alertMessage = "Upload failed: \(sceneViewModel.uploadError?.localizedDescription ?? "Unknown error")"
+                showAlert = true
             }
         }
-        }
+    }
+    
+    func resetForm() {
+        selectedImage = Image(systemName: "photo.artframe")
+        selectedUIImage = nil
+        selectedPhoto = nil
+        
+        // Reset the scene data in ViewModel
+        sceneViewModel.scene = KScene()
+    }
     
     
     
 }
 #Preview {
-    
+    UploadView(sceneViewModel: SceneViewModel())
 }
 

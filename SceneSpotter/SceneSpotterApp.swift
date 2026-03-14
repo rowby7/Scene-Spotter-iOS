@@ -13,7 +13,15 @@ struct SceneSpotterApp: App {
     @State private var authManager: AuthManager
     
     init() {
-        FirebaseApp.configure()
+        // Configure Firebase
+        if FirebaseApp.app() == nil {
+            if let filePath = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") {
+                FirebaseApp.configure()
+            } else {
+                print("⚠️ WARNING: GoogleService-Info.plist not found!")
+                print("Please download it from https://console.firebase.google.com/")
+            }
+        }
         self.authManager = AuthManager()
     }
     
