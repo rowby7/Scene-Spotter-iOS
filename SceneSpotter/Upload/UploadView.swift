@@ -13,10 +13,12 @@ import FirebaseStorage
 
 struct UploadView: View {
     @StateObject var sceneViewModel: SceneViewModel
+    @StateObject var locationManager: LocationSearchManager
     @State private var selectedImage: Image? = Image(systemName: "photo.artframe")
     @State private var selectedUIImage: UIImage?
     @State private var isPresentingImagePicker: Bool = false
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var selection: String = ""
 
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
@@ -58,14 +60,38 @@ struct UploadView: View {
                         
                         
                         VStack(alignment: .leading){
-                            
+
                             Text("Location address")
                             TextField("Location Address", text: $sceneViewModel.scene.locationAddress)
+                                .onChange(of: sceneViewModel.scene.locationAddress) {_, newValue in locationManager.updateQuery(newValue)
+                                    
+                                }
+                                        .background(Color.white)
+                                        .shadow(radius: 5)
+                                        .offset(y: 50)
+                            
+                            ScrollView{
+                                if !locationManager.results.isEmpty {
+                                    ForEach(locationManager.results, id: \.self) { result in
+                                        Button {
+                                            
+                                        } label: {
+                                            Text(result.title)
+                                        }
+                                    }
+                                }
+                            }
+                            .padding(.top, 55)
+                            .background(Color.white)
+                            .shadow(radius: 5)
+                            .offset(y: 50)
+                                }
                                 .textFieldStyle(.roundedBorder)
                            
                         }
+                   
                     }
-                }
+                
                 
                 Button(action: handleUploadTapped) {
                     if sceneViewModel.isUploading {
@@ -174,7 +200,8 @@ struct UploadView: View {
     
     
 }
+
 #Preview {
-    UploadView(sceneViewModel: SceneViewModel())
+    UploadView(sceneViewModel: SceneViewModel(), locationManager: LocationSearchManager())
 }
 

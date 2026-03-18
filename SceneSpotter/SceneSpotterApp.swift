@@ -29,10 +29,11 @@ struct SceneSpotterApp: App {
         WindowGroup {
             if authManager.user != nil { // <-- Check if you have a non-nil user (means there is a logged in user)
                 
-                // We have a logged in user, go to ChatView
+                // We have a logged in user, go to MapView
                 NavigationStack {
                     MapView()
                 }
+                .environment(authManager)
             } else {
                 
                 // No logged in user, go to LoginView

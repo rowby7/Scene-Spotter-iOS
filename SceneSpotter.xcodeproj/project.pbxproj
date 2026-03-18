@@ -16,16 +16,16 @@
 		89315D952EDCE1C4009B3193 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 89315D942EDCE1C4009B3193 /* FirebaseCore */; };
 		89D0C72C2EDCF241005E470A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 89D0C72B2EDCF241005E470A /* FirebaseFirestore */; };
 		89D0C72E2EDCF249005E470A /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 89D0C72D2EDCF249005E470A /* FirebaseStorage */; };
-		89D4933E2F65F67D002C4C13 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 89D4933D2F65F67D002C4C13 /* GoogleService-Info.plist */; };
 		89D493402F689BF0002C4C13 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 89D4933F2F689BF0002C4C13 /* .gitignore */; };
 		89D493422F689BFA002C4C13 /* GoogleService-Info-Template.plist in Resources */ = {isa = PBXBuildFile; fileRef = 89D493412F689BFA002C4C13 /* GoogleService-Info-Template.plist */; };
+		89D4934C2F6B6601002C4C13 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 89D4934B2F6B6601002C4C13 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		89315D4F2ED52D3B009B3193 /* SceneSpotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SceneSpotter.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		89D4933D2F65F67D002C4C13 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		89D4933F2F689BF0002C4C13 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		89D493412F689BFA002C4C13 /* GoogleService-Info-Template.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Template.plist"; sourceTree = "<group>"; };
+		89D4934B2F6B6601002C4C13 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -62,9 +62,9 @@
 				89315D512ED52D3B009B3193 /* SceneSpotter */,
 				89315D912EDCE17A009B3193 /* Frameworks */,
 				89315D502ED52D3B009B3193 /* Products */,
-				89D4933D2F65F67D002C4C13 /* GoogleService-Info.plist */,
 				89D4933F2F689BF0002C4C13 /* .gitignore */,
 				89D493412F689BFA002C4C13 /* GoogleService-Info-Template.plist */,
+				89D4934B2F6B6601002C4C13 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -161,7 +161,7 @@
 			files = (
 				89D493422F689BFA002C4C13 /* GoogleService-Info-Template.plist in Resources */,
 				89D493402F689BF0002C4C13 /* .gitignore in Resources */,
-				89D4933E2F65F67D002C4C13 /* GoogleService-Info.plist in Resources */,
+				89D4934C2F6B6601002C4C13 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

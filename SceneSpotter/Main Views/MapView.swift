@@ -39,7 +39,7 @@ struct MapView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing){
-                    NavigationLink(destination: UploadView(sceneViewModel: SceneViewModel())) {
+                    NavigationLink(destination: UploadView(sceneViewModel: SceneViewModel(), locationManager: LocationSearchManager())) {
                         Image(systemName: "plus.circle.fill")
                             .imageScale(.large)
                     }
